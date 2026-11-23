@@ -1,0 +1,61 @@
+name: Publish prepared vOrbit Lite source
+on:
+  push:
+    branches:
+      - source-publish-149-0-2-2
+permissions:
+  contents: write
+jobs:
+  publish:
+    if: github.repository == 'vishwakarmaindustriesabhishek-in/vOrbit-litefox'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Reconstruct and verify the prepared source tree
+        run: |
+          set -euo pipefail
+          payload="$GITHUB_WORKSPACE/.source-publish"
+          work="$RUNNER_TEMP/vorbit-source"
+          mkdir -p "$work"
+          cd "$work"
+          upstream_sha=$(jq -r .upstream_sha512 "$payload/archive-inputs.json")
+          locale_revision=$(jq -r .localization_revision "$payload/archive-inputs.json")
+          curl -fsSL --retry 4 --retry-all-errors \
+            https://archive.mozilla.org/pub/firefox/releases/149.0.2/source/firefox-149.0.2.source.tar.xz \
+            -o gecko.tar.xz
+          printf '%s  gecko.tar.xz\n' "$upstream_sha" | sha512sum -c -
+          tar -xJf gecko.tar.xz
+          mv firefox-149.0.2 vorbit-149.0.2-2
+          mkdir -p vorbit-149.0.2-2/lw
+          curl -fsSL --retry 4 --retry-all-errors \
+            "https://codeload.github.com/mozilla-l10n/firefox-l10n/zip/$locale_revision" -o locales.zip
+          unzip -q locales.zip
+          mv "firefox-l10n-$locale_revision" vorbit-149.0.2-2/lw/l10n
+          tar -xzf "$payload/source-overlay.tar.gz" -C vorbit-149.0.2-2
+          python3 "$payload/verify-tree.py" vorbit-149.0.2-2 "$payload/expected-source.jsonl.gz"
+          archive=vorbit-149.0.2-2.source.tar.xz
+          tar --sort=name --numeric-owner --owner=0 --group=0 -cf - vorbit-149.0.2-2 | xz -T0 -1 -c > "$archive"
+          sha256sum "$archive" > "$archive.sha256"
+      - name: Upload and publish the verified release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/vorbit-source"
+          upload=https://uploads.github.com/repos/vishwakarmaindustriesabhishek-in/vOrbit-litefox/releases/455062898/assets
+          archive=vorbit-149.0.2-2.source.tar.xz
+          for file in "$archive" "$archive.sha256"; do
+            content_type=application/x-xz
+            if [[ "$file" == *.sha256 ]]; then content_type=text/plain; fi
+            curl -fsS -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Content-Type: $content_type" \
+              --data-binary "@$file" "$upload?name=$file" > upload.json
+            actual=$(jq -r .digest upload.json)
+            expected=sha256:$(sha256sum "$file" | cut -d' ' -f1)
+            [[ "$actual" == "$expected" ]]
+            echo "Verified uploaded $file ($actual)"
+          done
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/455062898" -F draft=false --jq .html_url
+
