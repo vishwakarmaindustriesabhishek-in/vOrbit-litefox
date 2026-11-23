@@ -1,0 +1,344 @@
+diff --git a/browser/components/customizableui/CustomizableUI.sys.mjs b/browser/components/customizableui/CustomizableUI.sys.mjs
+--- a/browser/components/customizableui/CustomizableUI.sys.mjs
++++ b/browser/components/customizableui/CustomizableUI.sys.mjs
+@@ -333,6 +333,10 @@
+     this.updateForNewProtonVersion();
+     this.markObsoleteBuiltinButtonsSeen();
+ 
++    const layoutPref = "browser.vorbit.toolbarLayout.applied";
++    const initializeLayout = !Services.prefs.getBoolPref(layoutPref, false);
++    const migratedLayout = initializeLayout && this.applyVOrbitToolbarLayout();
++
+     this.registerArea(
+       CustomizableUI.AREA_FIXED_OVERFLOW_PANEL,
+       {
+@@ -357,14 +361,11 @@
+       lazy.sidebarRevampEnabled ? "sidebar-button" : null,
+       "back-button",
+       "forward-button",
++      "home-button",
+       "stop-reload-button",
+-      Services.policies.isAllowed("removeHomeButtonByDefault")
+-        ? null
+-        : "home-button",
+-      "spring",
+       "vertical-spacer",
+       "urlbar-container",
+-      "spring",
++      gPalette.has("panic-button") ? "panic-button" : null,
+       "downloads-button",
+       AppConstants.MOZ_DEV_EDITION ? "developer-button" : null,
+       lazy.ippEnabled ? "ipprotection-button" : null,
+@@ -436,6 +437,14 @@
+     );
+     lazy.log.debug(`All the areas registered: ${[...gAreas.keys()]}`);
+ 
++    if (initializeLayout) {
++      if (migratedLayout) {
++        gDirty = true;
++        this.saveState();
++      }
++      Services.prefs.setBoolPref(layoutPref, true);
++    }
++
+     // At initialization, if we find vertical tabs enabled but not sidebar.revamp
+     // we'll enable revamp rather than disable vertical tabs.
+     this.reconcileSidebarPrefs(kPrefSidebarVerticalTabsEnabled);
+@@ -449,6 +458,50 @@
+     Services.prefs.addObserver(kPrefSidebarVerticalTabsEnabled, this);
+     Services.prefs.addObserver(kPrefSidebarRevampEnabled, this);
+     Services.prefs.addObserver(kPrefSidebarPositionStartEnabled, this);
++  },
++
++  applyVOrbitToolbarLayout() {
++    const placements = gSavedState?.placements;
++    const toolbar = placements?.[CustomizableUI.AREA_NAVBAR];
++    if (!toolbar) {
++      return false;
++    }
++
++    const isPlaced = id =>
++      Object.values(placements).some(area => area.includes(id));
++    let changed = false;
++    const urlbar = toolbar.indexOf("urlbar-container");
++    if (urlbar >= 0) {
++      const before = toolbar[urlbar - 1] === "vertical-spacer" ? urlbar - 2 : urlbar - 1;
++      for (const index of [urlbar + 1, before]) {
++        const id = toolbar[index];
++        if (id === "spring" || id?.startsWith("customizableui-special-spring")) {
++          toolbar.splice(index, 1);
++          changed = true;
++        }
++      }
++    }
++
++    const reload = toolbar.indexOf("stop-reload-button");
++    const home = toolbar.indexOf("home-button");
++    if (reload >= 0 && home === reload + 1) {
++      toolbar.splice(home, 1);
++      toolbar.splice(reload, 0, "home-button");
++      changed = true;
++    } else if (!isPlaced("home-button")) {
++      const urlbar = toolbar.indexOf("urlbar-container");
++      const position = reload >= 0 ? reload : Math.max(0, urlbar);
++      toolbar.splice(position, 0, "home-button");
++      changed = true;
++    }
++
++    if (gPalette.has("panic-button") && !isPlaced("panic-button")) {
++      const downloads = toolbar.indexOf("downloads-button");
++      const position = downloads >= 0 ? downloads : toolbar.length;
++      toolbar.splice(position, 0, "panic-button");
++      changed = true;
++    }
++    return changed;
+   },
+ 
+   /**
+diff --git a/browser/themes/shared/toolbarbutton-icons.css b/browser/themes/shared/toolbarbutton-icons.css
+--- a/browser/themes/shared/toolbarbutton-icons.css
++++ b/browser/themes/shared/toolbarbutton-icons.css
+@@ -17,7 +17,6 @@
+ #nav-bar-overflow-button:-moz-locale-dir(rtl) > .toolbarbutton-icon,
+ #nav-bar-overflow-button:-moz-locale-dir(rtl) > .toolbarbutton-animatable-box > .toolbarbutton-animatable-image,
+ #PlacesChevron:-moz-locale-dir(rtl) > .toolbarbutton-icon,
+-#panic-button:-moz-locale-dir(rtl) > .toolbarbutton-icon,
+ #PanelUI-menu-button:-moz-locale-dir(rtl) > .toolbarbutton-badge-stack > .toolbarbutton-icon {
+   scale: -1 1;
+ }
+@@ -246,11 +245,19 @@
+ }
+ 
+ #panic-button {
+-  list-style-image: url("chrome://browser/skin/forget.svg");
++  list-style-image: url("chrome://browser/skin/flame.svg");
++  fill: light-dark(#a44518, #ffab79);
+ }
+ 
+ #panic-button[open] {
+-  fill: light-dark(rgb(213, 32, 20), #ff848b);
++  fill: light-dark(#85280e, #ffc6a6);
++}
++
++@media (forced-colors: active) {
++  #panic-button,
++  #panic-button[open] {
++    fill: ButtonText;
++  }
+ }
+ 
+ #library-button {
+diff --git a/browser/themes/shared/customizableui/panelUI-shared.css b/browser/themes/shared/customizableui/panelUI-shared.css
+--- a/browser/themes/shared/customizableui/panelUI-shared.css
++++ b/browser/themes/shared/customizableui/panelUI-shared.css
+@@ -1643,10 +1643,9 @@
+ #PanelUI-panic-timeframe-icon {
+   background-color: transparent;
+   margin-inline-end: 10px;
+-  list-style-image: image-set(
+-    url(chrome://browser/skin/panic-panel/header.png),
+-    url(chrome://browser/skin/panic-panel/header@2x.png) 2x
+-  );
++  list-style-image: url("chrome://browser/skin/flame.svg");
++  -moz-context-properties: fill;
++  fill: currentColor;
+   max-height: var(--size-item-xlarge);
+   width: var(--size-item-xlarge);
+ }
+@@ -1656,9 +1655,6 @@
+   margin-bottom: 5px;
+ }
+ 
+-#PanelUI-panic-timeframe-icon:-moz-locale-dir(rtl) {
+-  transform: scaleX(-1);
+-}
+ 
+ .subviewradio {
+   appearance: none;
+diff --git a/browser/locales/en-US/chrome/browser/customizableui/customizableWidgets.properties b/browser/locales/en-US/chrome/browser/customizableui/customizableWidgets.properties
+--- a/browser/locales/en-US/chrome/browser/customizableui/customizableWidgets.properties
++++ b/browser/locales/en-US/chrome/browser/customizableui/customizableWidgets.properties
+@@ -46,8 +46,8 @@
+ # LOCALIZATION NOTE(paste-button.tooltiptext2): %S is the keyboard shortcut.
+ paste-button.tooltiptext2 = Paste (%S)
+ 
+-panic-button.label = Forget
+-panic-button.tooltiptext = Forget about some browsing history
++panic-button.label = Fire
++panic-button.tooltiptext = Fire (clear recent browsing data)
+ 
+ toolbarspring.label = Flexible Space
+ toolbarseparator.label = Separator
+diff --git a/browser/locales/en-US/browser/panicButton.ftl b/browser/locales/en-US/browser/panicButton.ftl
+--- a/browser/locales/en-US/browser/panicButton.ftl
++++ b/browser/locales/en-US/browser/panicButton.ftl
+@@ -5,13 +5,13 @@
+ panic-button-open-new-window = Open a new clean Window
+ panic-button-undo-warning = This action cannot be undone.
+ panic-button-forget-button =
+-    .label = Forget!
++    .label = Clear now
+ 
+ ## These strings are combined to form a complete sentence starting with
+ ## panic-main-timeframe-desc. For example: "Forget the last: Five minutes".
+ ## Please ensure that this remains the case in the translation.
+ 
+-panic-main-timeframe-desc = Forget the last:
++panic-main-timeframe-desc = Clear the last:
+ panic-button-5min =
+     .label = Five minutes
+ panic-button-2hr =
+diff --git a/browser/extensions/newtab/content-src/components/Logo/Logo.jsx b/browser/extensions/newtab/content-src/components/Logo/Logo.jsx
+--- a/browser/extensions/newtab/content-src/components/Logo/Logo.jsx
++++ b/browser/extensions/newtab/content-src/components/Logo/Logo.jsx
+@@ -13,7 +13,7 @@
+         data-l10n-id="newtab-logo-and-wordmark"
+       >
+         <div className="logo" />
+-        <div className="wordmark" />
++        <div className="wordmark">vOrbit</div>
+       </div>
+     </h1>
+   );
+diff --git a/browser/extensions/newtab/data/content/activity-stream.bundle.js b/browser/extensions/newtab/data/content/activity-stream.bundle.js
+--- a/browser/extensions/newtab/data/content/activity-stream.bundle.js
++++ b/browser/extensions/newtab/data/content/activity-stream.bundle.js
+@@ -15215,7 +15215,7 @@
+     className: "logo"
+   }), /*#__PURE__*/external_React_default().createElement("div", {
+     className: "wordmark"
+-  })));
++  }, "vOrbit")));
+ }
+ 
+ ;// CONCATENATED MODULE: ./content-src/components/ExternalComponentWrapper/ExternalComponentWrapper.jsx
+diff --git a/browser/extensions/newtab/content-src/components/Logo/_Logo.scss b/browser/extensions/newtab/content-src/components/Logo/_Logo.scss
+--- a/browser/extensions/newtab/content-src/components/Logo/_Logo.scss
++++ b/browser/extensions/newtab/content-src/components/Logo/_Logo.scss
+@@ -6,6 +6,7 @@
+ .logo-and-wordmark {
+   align-items: center;
+   display: flex;
++  gap: var(--space-medium);
+   justify-content: center;
+   // Bug 1967304 - Large number (48px)
+   margin-block-end: var(--space-xxlarge);
+@@ -17,20 +18,19 @@
+   }
+ 
+   .logo {
+-    display: none;
+-
+-    .has-recommended-stories & {
+-      @media (max-width: $break-point-large - 1) {
+-        display: block;
+-        background: image-set(url('chrome://branding/content/about-logo.png'), url('chrome://branding/content/about-logo@2x.png') 2x) no-repeat center / contain;
+-      }
+-    }
++    flex: none;
++    width: 48px;
++    height: 48px;
++    border-radius: 12px;
++    background: image-set(url('chrome://branding/content/icon48.png'), url('chrome://branding/content/icon128.png') 2x) no-repeat center / 34px
++      color-mix(in srgb, currentColor 6%, transparent);
++    box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 9%, transparent);
+   }
+ 
+   .wordmark {
+-    background: url('chrome://branding/content/firefox-wordmark.svg') no-repeat center / contain;
+-    height: 64px;
+-    width: 228px;
+-    max-width: 100%;
++    color: var(--newtab-text-primary-color);
++    font-size: clamp(1.75rem, 4vw, 2.5rem);
++    font-weight: 650;
++    line-height: 1.1;
+   }
+ }
+diff --git a/browser/extensions/newtab/css/activity-stream.css b/browser/extensions/newtab/css/activity-stream.css
+--- a/browser/extensions/newtab/css/activity-stream.css
++++ b/browser/extensions/newtab/css/activity-stream.css
+@@ -767,6 +767,7 @@
+ .logo-and-wordmark {
+   align-items: center;
+   display: flex;
++  gap: var(--space-medium);
+   justify-content: center;
+   margin-block-end: var(--space-xxlarge);
+ }
+@@ -774,19 +775,18 @@
+   margin-block-end: calc(var(--space-large) + var(--space-xlarge));
+ }
+ .logo-and-wordmark .logo {
+-  display: none;
+-}
+-@media (max-width: 865px) {
+-  .has-recommended-stories .logo-and-wordmark .logo {
+-    display: block;
+-    background: image-set(url("chrome://branding/content/about-logo.png"), url("chrome://branding/content/about-logo@2x.png") 2x) no-repeat center/contain;
+-  }
++  flex: none;
++  width: 48px;
++  height: 48px;
++  border-radius: 12px;
++  background: image-set(url("chrome://branding/content/icon48.png"), url("chrome://branding/content/icon128.png") 2x) no-repeat center/34px color-mix(in srgb, currentColor 6%, transparent);
++  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 9%, transparent);
+ }
+ .logo-and-wordmark .wordmark {
+-  background: url("chrome://branding/content/firefox-wordmark.svg") no-repeat center/contain;
+-  height: 64px;
+-  width: 228px;
+-  max-width: 100%;
++  color: var(--newtab-text-primary-color);
++  font-size: clamp(1.75rem, 4vw, 2.5rem);
++  font-weight: 650;
++  line-height: 1.1;
+ }
+ 
+ /* stylelint-disable max-nesting-depth */
+@@ -1573,7 +1573,7 @@
+    */
+ }
+ .search-wrapper .logo-and-wordmark {
+-  margin-block-end: var(--space-xxlarge);
++  margin-block-end: calc(var(--space-large) + var(--space-medium));
+ }
+ .search-wrapper .logo-and-wordmark-wrapper {
+   margin-block-end: 0;
+@@ -1762,11 +1762,9 @@
+ .has-recommended-stories .logo {
+   width: 52px;
+   height: 52px;
+-  background-size: 52px;
+ }
+ .has-recommended-stories .wordmark {
+   display: none;
+-  height: 52px;
+ }
+ @media (min-width: 866px) {
+   .has-recommended-stories .wordmark {
+diff --git a/browser/extensions/newtab/content-src/components/Search/_Search.scss b/browser/extensions/newtab/content-src/components/Search/_Search.scss
+--- a/browser/extensions/newtab/content-src/components/Search/_Search.scss
++++ b/browser/extensions/newtab/content-src/components/Search/_Search.scss
+@@ -13,7 +13,7 @@
+   margin-block-start: 0;
+ 
+   .logo-and-wordmark {
+-    margin-block-end: var(--space-xxlarge);
++    margin-block-end: calc(var(--space-large) + var(--space-medium));
+   }
+ 
+   .logo-and-wordmark-wrapper {
+@@ -258,12 +258,10 @@
+   .logo {
+     width: 52px;
+     height: 52px;
+-    background-size: 52px;
+   }
+ 
+   .wordmark {
+     display: none;
+-    height: 52px;
+ 
+     @media (min-width: $break-point-large) {
+       display: block;

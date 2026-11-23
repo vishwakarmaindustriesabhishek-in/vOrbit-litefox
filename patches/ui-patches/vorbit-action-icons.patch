@@ -1,0 +1,36 @@
+diff --git a/browser/themes/shared/browser-shared.css b/browser/themes/shared/browser-shared.css
+--- a/browser/themes/shared/browser-shared.css
++++ b/browser/themes/shared/browser-shared.css
+@@ -650,7 +650,7 @@
+ }
+ 
+ .private-browsing-indicator-icon {
+-  list-style-image: url("chrome://global/skin/icons/indicator-private-browsing.svg");
++  list-style-image: url("chrome://browser/skin/privatebrowsing/favicon.svg");
+   width: 16px;
+   height: 16px;
+ }
+diff --git a/browser/themes/shared/tabbrowser/tabs.css b/browser/themes/shared/tabbrowser/tabs.css
+--- a/browser/themes/shared/tabbrowser/tabs.css
++++ b/browser/themes/shared/tabbrowser/tabs.css
+@@ -2437,7 +2437,7 @@
+ #tabs-newtab-button,
+ #vertical-tabs-newtab-button,
+ #TabsToolbar #new-tab-button {
+-  list-style-image: url(chrome://global/skin/icons/plus.svg);
++  list-style-image: url(chrome://browser/skin/new-tab.svg);
+ }
+ 
+ #tabbrowser-tabs[hasadjacentnewtabbutton]:not([overflow]) ~ #new-tab-button,
+diff --git a/browser/themes/shared/toolbarbutton-icons.css b/browser/themes/shared/toolbarbutton-icons.css
+--- a/browser/themes/shared/toolbarbutton-icons.css
++++ b/browser/themes/shared/toolbarbutton-icons.css
+@@ -80,7 +80,7 @@
+ }
+ 
+ #new-window-button {
+-  list-style-image: url("chrome://browser/skin/window.svg");
++  list-style-image: url("chrome://branding/content/new-window.svg");
+ }
+ 
+ #new-tab-button {

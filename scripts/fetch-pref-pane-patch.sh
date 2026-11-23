@@ -1,1 +1,1 @@
-wget -O patches/librewolf-pref-pane.patch https://gitlab.com/librewolf-community/browser/librewolf-pref-pane/-/jobs/artifacts/main/raw/librewolf-pref-pane.patch?job=create-patch
+wget -O patches/vorbit-pref-pane.patch https://gitlab.com/vorbit-community/browser/vorbit-pref-pane/-/jobs/artifacts/main/raw/vorbit-pref-pane.patch?job=create-patch

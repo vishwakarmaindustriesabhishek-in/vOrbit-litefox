@@ -1,4 +1,4 @@
-identity-allow-site-data = LibreWolf: Завжди зберігати файли cookie та дані для цього сайту
+identity-allow-site-data = vOrbit-lite: Завжди зберігати файли cookie та дані для цього сайту
 urlbar-webgl-notification-anchor =
     .tooltiptext = Керування дозволом WebGL
 urlbar-webgl-blocked =

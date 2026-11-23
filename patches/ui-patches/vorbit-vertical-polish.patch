@@ -1,0 +1,97 @@
+diff --git a/browser/themes/shared/tabbrowser/tabs.css b/browser/themes/shared/tabbrowser/tabs.css
+--- a/browser/themes/shared/tabbrowser/tabs.css
++++ b/browser/themes/shared/tabbrowser/tabs.css
+@@ -1054,6 +1054,16 @@
+     outline-color: transparent;
+     box-shadow: inset 0 2px color-mix(in srgb, #299cba 53%, var(--toolbar-bgcolor));
+   }
++
++  :where(
++    #tabbrowser-tabs[orient="vertical"]:not([movingtab])
++    .tabbrowser-tab:not(tab-group *, tab-split-view-wrapper *) > .tab-stack
++  ) > .tab-background[selected]:not([multiselected]) {
++    box-sizing: border-box;
++    border-inline-start: 2px solid color-mix(in srgb, #299cba 62%, var(--tab-selected-bgcolor));
++    outline-color: color-mix(in srgb, currentColor 16%, transparent);
++    box-shadow: none;
++  }
+ }
+ 
+ /* Keyboard focus outline */
+diff --git a/browser/extensions/newtab/content-src/components/Sections/_Sections.scss b/browser/extensions/newtab/content-src/components/Sections/_Sections.scss
+--- a/browser/extensions/newtab/content-src/components/Sections/_Sections.scss
++++ b/browser/extensions/newtab/content-src/components/Sections/_Sections.scss
+@@ -53,6 +53,24 @@
+       height: $card-height-large;
+     }
+   }
++
++  [data-section-id="highlights"] .section-empty-state {
++    height: auto;
++    box-sizing: border-box;
++    padding: var(--space-medium) var(--space-large);
++    border-radius: var(--border-radius-medium);
++    background-color: var(--newtab-background-color-secondary);
++
++    .empty-state {
++      margin: 0;
++      max-width: 65ch;
++    }
++
++    .empty-state-message {
++      margin: 0;
++      text-align: start;
++    }
++  }
+ }
+ 
+ .top-stories-bottom-container {
+diff --git a/browser/extensions/newtab/css/activity-stream.css b/browser/extensions/newtab/css/activity-stream.css
+--- a/browser/extensions/newtab/css/activity-stream.css
++++ b/browser/extensions/newtab/css/activity-stream.css
+@@ -1502,6 +1502,21 @@
+     height: 370px;
+   }
+ }
++.sections-list [data-section-id=highlights] .section-empty-state {
++  height: auto;
++  box-sizing: border-box;
++  padding: var(--space-medium) var(--space-large);
++  border-radius: var(--border-radius-medium);
++  background-color: var(--newtab-background-color-secondary);
++}
++.sections-list [data-section-id=highlights] .section-empty-state .empty-state {
++  margin: 0;
++  max-width: 65ch;
++}
++.sections-list [data-section-id=highlights] .section-empty-state .empty-state-message {
++  margin: 0;
++  text-align: start;
++}
+ 
+ .top-stories-bottom-container {
+   color: var(--newtab-text-primary-color);
+diff --git a/browser/locales/en-US/browser/newtab/newtab.ftl b/browser/locales/en-US/browser/newtab/newtab.ftl
+--- a/browser/locales/en-US/browser/newtab/newtab.ftl
++++ b/browser/locales/en-US/browser/newtab/newtab.ftl
+@@ -197,7 +197,7 @@
+ 
+ ## Empty Section States: These show when there are no more items in a section. Ex. When there are no more Pocket story recommendations, in the space where there would have been stories, this is shown instead.
+ 
+-newtab-empty-section-highlights = Start browsing, and we’ll show some of the great articles, videos, and other pages you’ve recently visited or bookmarked here.
++newtab-empty-section-highlights = Recently visited and bookmarked pages will appear here.
+ 
+ # Ex. When there are no more story recommendations, in the space where there would have been stories, this is shown instead.
+ newtab-empty-section-topstories-generic = You’ve caught up. Check back later for more stories. Can’t wait? Select a popular topic to find more great stories from around the web.
+diff --git a/browser/extensions/newtab/webext-glue/locales/en-US/browser/newtab/newtab.ftl b/browser/extensions/newtab/webext-glue/locales/en-US/browser/newtab/newtab.ftl
+--- a/browser/extensions/newtab/webext-glue/locales/en-US/browser/newtab/newtab.ftl
++++ b/browser/extensions/newtab/webext-glue/locales/en-US/browser/newtab/newtab.ftl
+@@ -197,7 +197,7 @@
+ 
+ ## Empty Section States: These show when there are no more items in a section. Ex. When there are no more Pocket story recommendations, in the space where there would have been stories, this is shown instead.
+ 
+-newtab-empty-section-highlights = Start browsing, and we’ll show some of the great articles, videos, and other pages you’ve recently visited or bookmarked here.
++newtab-empty-section-highlights = Recently visited and bookmarked pages will appear here.
+ 
+ # Ex. When there are no more story recommendations, in the space where there would have been stories, this is shown instead.
+ newtab-empty-section-topstories-generic = You’ve caught up. Check back later for more stories. Can’t wait? Select a popular topic to find more great stories from around the web.

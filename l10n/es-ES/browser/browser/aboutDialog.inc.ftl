@@ -1,1 +1,1 @@
-about-librewolf = LibreWolf es una versión personalizada de Firefox, cuyos objetivos principales son la privacidad, la seguridad y la libertad del usuario.
+about-vorbit = vOrbit-lite es una versión personalizada de Firefox, cuyos objetivos principales son la privacidad, la seguridad y la libertad del usuario.

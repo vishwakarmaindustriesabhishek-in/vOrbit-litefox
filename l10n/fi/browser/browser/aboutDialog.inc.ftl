@@ -1,1 +1,1 @@
-about-librewolf = LibreWolf on räätälöity versio Firefoxista. Sen ensisijaiset tavoitteet ovat yksityisyys, tietoturva ja käyttäjävapaudet.
+about-vorbit = vOrbit-lite on räätälöity versio Firefoxista. Sen ensisijaiset tavoitteet ovat yksityisyys, tietoturva ja käyttäjävapaudet.

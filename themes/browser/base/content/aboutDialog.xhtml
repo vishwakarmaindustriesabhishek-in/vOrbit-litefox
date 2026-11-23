@@ -18,7 +18,7 @@
         data-l10n-id="aboutDialog-title"
 #endif
         role="dialog"
-        aria-describedby="version distribution distributionId communityDesc contributeDesc trademark"
+        aria-describedby="version aboutText companyBrand"
         >
 #ifdef XP_MACOSX
 #include macWindow.inc.xhtml
@@ -36,14 +36,20 @@
   <div id="grid">
     <div id="left" />
     <div id="right">
-      <label id="wordmark">LibreWolf</label>
+      <html:img id="wordmark" src="chrome://branding/content/about-wordmark.svg"
+                alt="vOrbit-lite" width="200" height="56" />
       <div id="version">
         <label id="versionNumber" />
       </div >
       <label id="distribution" />
       <label id="distributionId" />
-      <label id="aboutText" data-l10n-id="about-librewolf" />
-      <label id="websiteLink" is="text-link" href="https://librewolf.net/">https://librewolf.net/</label>
+      <label id="aboutText" data-l10n-id="about-vorbit" />
+      <div id="companyBrand">
+        <html:img src="chrome://branding/content/rs-foundation.png" alt=""
+                  width="40" height="40" />
+        <label data-l10n-id="vorbit-brand-vendor" />
+      </div>
+      <label id="websiteLink" is="text-link" href="https://vorbit.net/">https://vorbit.net/</label>
     </div>
   </div>
 

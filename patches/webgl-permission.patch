@@ -455,7 +455,7 @@ index a9e5603060..7ea09e134b 100644
  #include "mozilla/RandomNum.h"
  #include "mozilla/ResultVariant.h"
  #include "mozilla/ScopeExit.h"
-+#include "mozilla/StaticPrefs_librewolf.h"
++#include "mozilla/StaticPrefs_vorbit.h"
  #include "mozilla/StaticPrefs_webgl.h"
 +#include "mozilla/dom/BrowserChild.h"
  #include "mozilla/dom/BufferSourceBinding.h"
@@ -540,7 +540,7 @@ index a9e5603060..7ea09e134b 100644
 +                       break;
 +       }
 +
-+       bool hidePermissionDoorhanger = StaticPrefs::librewolf_webgl_prompt_hide();
++       bool hidePermissionDoorhanger = StaticPrefs::vorbit_webgl_prompt_hide();
 +
 +       nsAutoString message;
 +       message.AppendPrintf("Blocked %s from creating WebGL context but prompting the user.",
@@ -558,7 +558,7 @@ index a9e5603060..7ea09e134b 100644
 +               return false;
 +       }
 +
-+       bool webGLDisabled = StaticPrefs::librewolf_webgl_prompt();
++       bool webGLDisabled = StaticPrefs::vorbit_webgl_prompt();
 +
 +       if (!webGLDisabled) {
 +               return true;
@@ -690,39 +690,39 @@ diff --git a/modules/libpref/init/StaticPrefList.yaml b/modules/libpref/init/Sta
 index 262eee800b..109c04fc9d 100644
 --- a/modules/libpref/init/StaticPrefList.yaml
 +++ b/modules/libpref/init/StaticPrefList.yaml
-@@ -11368,6 +11368,20 @@
-   value: false
+@@ -18871,6 +18871,20 @@
    mirror: always
  
-+#---------------------------------------------------------------------------
-+# Prefs starting with "librewolf."
+ #---------------------------------------------------------------------------
++# Prefs starting with "vorbit."
 +#---------------------------------------------------------------------------
 +
-+- name: librewolf.webgl.prompt
++- name: vorbit.webgl.prompt
 +  type: RelaxedAtomicBool
 +  value: true
 +  mirror: always
 +
-+- name: librewolf.webgl.prompt.hide
++- name: vorbit.webgl.prompt.hide
 +  type: RelaxedAtomicBool
 +  value: true
 +  mirror: always
 +
++#---------------------------------------------------------------------------
+ # Prefs starting with "webgl." (for pref access from Worker threads)
  #---------------------------------------------------------------------------
- # Prefs starting with "logging."
- #---------------------------------------------------------------------------
+
 diff --git a/modules/libpref/moz.build b/modules/libpref/moz.build
 index 46034d8d99..9807b024b8 100644
 --- a/modules/libpref/moz.build
 +++ b/modules/libpref/moz.build
-@@ -59,6 +59,7 @@ pref_groups = [
-     "javascript",
-     "layers",
-     "layout",
-+    "librewolf",
-     "logging",
-     "mathml",
-     "media",
+@@ -91,6 +91,7 @@
+     "ui",
+     "urlclassifier",
+     "view_source",
++    "vorbit",
+     "webgl",
+     "widget",
+     "zoom",
 @@ -142,7 +143,7 @@ GeneratedFile(
      *gen_all_tuple,
      script="init/generate_static_pref_list.py",

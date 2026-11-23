@@ -1,0 +1,28 @@
+diff --git a/browser/themes/shared/tabbrowser/tabs.css b/browser/themes/shared/tabbrowser/tabs.css
+--- a/browser/themes/shared/tabbrowser/tabs.css
++++ b/browser/themes/shared/tabbrowser/tabs.css
+@@ -1038,6 +1038,24 @@
+   }
+ }
+ 
++@media (prefers-contrast: no-preference) and (forced-colors: none) {
++  :root:not([customizing]) #navigator-toolbox:not([tabs-hidden]) > #nav-bar {
++    border-top-style: none;
++  }
++
++  :where(
++    #TabsToolbar:not([customizing])
++    #tabbrowser-tabs[orient="horizontal"]:not([movingtab])
++    .tabbrowser-tab:not(tab-group *, tab-split-view-wrapper *) > .tab-stack
++  ) > .tab-background[selected]:not([multiselected]) {
++    margin-block-end: 0;
++    border-radius: 10px 10px 0 0;
++    background-color: var(--toolbar-bgcolor);
++    outline-color: transparent;
++    box-shadow: inset 0 2px color-mix(in srgb, #299cba 53%, var(--toolbar-bgcolor));
++  }
++}
++
+ /* Keyboard focus outline */
+ 
+ #TabsToolbar #firefox-view-button:focus-visible > .toolbarbutton-icon,

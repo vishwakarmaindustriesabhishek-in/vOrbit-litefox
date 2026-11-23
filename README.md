@@ -1,8 +1,8 @@
-# LibreWolf Source Repository
+# vOrbit Lite Source
 
-This repository contains all the patches and theming that make up LibreWolf, as well as scripts and a Makefile to build LibreWolf. There also is the [Settings repository](https://codeberg.org/librewolf/settings), which contains the LibreWolf preferences.
+This repository contains the vOrbit Lite patches, branding, and build scripts. The settings submodule pins the [upstream LibreWolf settings](https://codeberg.org/librewolf/settings). Source preparation adapts those settings for vOrbit Lite.
 
-## LibreWolf overview
+## vorbit overview
 
 ```mermaid
 graph LR
@@ -10,8 +10,8 @@ graph LR
 
     FFSRC--Tarball--->Source
 
-    subgraph librewolf-community/
-    Settings(Settings)--"librewolf.cfg<br>policies.json"-->Source
+    subgraph vorbit-community/
+    Settings(Settings)--"vorbit.cfg<br>policies.json"-->Source
     Website(Website<br><br>- Documentation<br>- FAQ)
     subgraph browser/
         Source(Source<br><br>- Patches<br>- Theming<br>- Build scripts)
@@ -20,19 +20,19 @@ graph LR
         Arch
     end
     end
-    Website-->librewolf.net
+    Website-->vorbit.net
     Source--"Source tarball"-->bsys6
-    AppImage--".appimage"-->librewolf.net
-    bsys6--"Windows setup.exe"--->librewolf.net
-    bsys6--"Windows portable.zip"--->librewolf.net
+    AppImage--".appimage"-->vorbit.net
+    bsys6--"Windows setup.exe"--->vorbit.net
+    bsys6--"Windows portable.zip"--->vorbit.net
     bsys6--"Windows .msix"--->MS("Microsoft Store")
     bsys6--"Windows .nupkg"--->Chocolatey
     bsys6--"Linux binary tarball"--->Flathub
     bsys6--"Linux binary tarball"--> AppImage
-    bsys6--"Linux .deb"--->repo.librewolf.net
-    bsys6--"Linux .rpm"--->repo.librewolf.net
-    bsys6--"Linux binary tarball for 'librewolf-bin'"--> Arch
-    Source--"Source tarball for 'librewolf'"-->Arch
+    bsys6--"Linux .deb"--->repo.vorbit.net
+    bsys6--"Linux .rpm"--->repo.vorbit.net
+    bsys6--"Linux binary tarball for 'vorbit-bin'"--> Arch
+    Source--"Source tarball for 'vorbit'"-->Arch
     Arch-->AUR
 ```
 
@@ -42,39 +42,39 @@ List of browser build sub projects. These are the locations where people have th
 
 Currently active build repositories:
 
-* [Arch](https://codeberg.org/librewolf/arch): Arch Linux package
-* [Bsys6](https://codeberg.org/librewolf/bsys6): .deb/.rpm for Mint, Fedora, Ubuntu; .dmg for MacOS; portable/setup for Windows.
-* [Gentoo](https://codeberg.org/librewolf/gentoo): Gentoo package
+* [Arch](https://codeberg.org/vorbit/arch): Arch Linux package
+* [Bsys6](https://codeberg.org/vorbit/bsys6): .deb/.rpm for Mint, Fedora, Ubuntu; .dmg for MacOS; portable/setup for Windows.
+* [Gentoo](https://codeberg.org/vorbit/gentoo): Gentoo package
 
 Downstream distribution packages:
 
-* [Alpine Linux aport](https://pkgs.alpinelinux.org/packages?name=librewolf&arch=)
+* [Alpine Linux aport](https://pkgs.alpinelinux.org/packages?name=vorbit&arch=)
 
 Previous forks:
 
 * Cachy-Browser: https://github.com/cachyos/cachyos-browser-settings
 * FireDragon: https://github.com/dr460nf1r3/firedragon-browser
 
-## LibreWolf build instructions
+## vorbit build instructions
 
-There are two ways to build LibreWolf. You can either use the source tarball or compile directly with this repository.
+There are two ways to build vorbit. You can either use the source tarball or compile directly with this repository.
 
 ### Building from the Tarball
 
-First, let's **[download the latest tarball](https://codeberg.org/librewolf/source/releases)**. This tarball is the latest produced by the [CI](https://codeberg.org/librewolf/source/actions). You can also check the sha256sum of the tarball there.
+The [Releases page](https://github.com/vishwakarmaindustriesabhishek-in/vOrbit-litefox/releases) is the download location for the prepared source tree and its SHA-256 checksum.
 
 ```bash
 tar xf <tarball>
 cd <folder>
 ```
 
-Then, you have to bootstrap your system to be able to build LibreWolf. You only have to do this one time. It is done by running the following commands:
+Then, you have to bootstrap your system to be able to build vorbit. You only have to do this one time. It is done by running the following commands:
 
 ```bash
 ./mach --no-interactive bootstrap --application-choice=browser
 ```
 
-Finally you can build LibreWolf and then package or run it with the following commands:
+Finally you can build vorbit and then package or run it with the following commands:
 
 ```bash
 ./mach build
@@ -88,23 +88,23 @@ Finally you can build LibreWolf and then package or run it with the following co
 First, clone this repository with Git:
 
 ```bash
-git clone --recursive https://codeberg.org/librewolf/source.git librewolf-source
-cd librewolf-source
+git clone --recursive https://github.com/vishwakarmaindustriesabhishek-in/vOrbit-litefox.git vorbit-source
+cd vorbit-source
 ```
 
-Next, build the LibreWolf source code with the following command:
+Next, build the vorbit source code with the following command:
 
 ```bash
 make dir
 ```
 
-After that, you have to bootstrap your system to be able to build LibreWolf. You only have to do this one time. It is done by running the following command:
+After that, you have to bootstrap your system to be able to build vorbit. You only have to do this one time. It is done by running the following command:
 
 ```bash
 make bootstrap
 ```
 
-Finally you can build LibreWolf and then package or run it with the following commands:
+Finally you can build vorbit and then package or run it with the following commands:
 
 ```bash
 make build
@@ -115,22 +115,22 @@ make run
 
 ## Translations
 
-We use Weblate to localize all LibreWolf-specific strings. You can help us by
-translating LibreWolf into your language at
-https://translate.codeberg.org/engage/librewolf. Here is the current translation
+We use Weblate to localize all vorbit-specific strings. You can help us by
+translating vorbit into your language at
+https://translate.codeberg.org/engage/vorbit. Here is the current translation
 status:
 
-<a href="https://translate.codeberg.org/engage/librewolf/">
-<img src="https://translate.codeberg.org/widget/librewolf/multi-auto.svg" alt="Translation status" />
+<a href="https://translate.codeberg.org/engage/vorbit/">
+<img src="https://translate.codeberg.org/widget/vorbit/multi-auto.svg" alt="Translation status" />
 </a>
 
 ## Development Notes
 
 ### How to make a patch
 
-The easiest way to make patches is to go to the LibreWolf source folder:
+The easiest way to make patches is to go to the vorbit source folder:
 ```bash
-cd librewolf-$(cat version)
+cd vorbit-$(cat version)
 git init
 git add <path_to_file_you_changed>
 git commit -am initial-commit
@@ -140,7 +140,7 @@ We have Gitter / Matrix rooms, and on the website we have links to the various i
 
 ### How to work on an existing patch
 
-The easiest way to make patches is to go to the LibreWolf source folder:
+The easiest way to make patches is to go to the vorbit source folder:
 ```bash
 make fetch # get the firefox tarball
 ./scripts/git-patchtree.sh patches/sed-patches/disable-pocket.patch
@@ -161,7 +161,7 @@ Well, first of all:
 * Handy link: [Bugs Filed Today](https://bugzilla.mozilla.org/buglist.cgi?cmdtype=dorem&remaction=run&namedcmd=Bugs%20Filed%20Today&sharer_id=1&list_id=15939480).
 * The essential: [Firefox Source Tree Documentation](https://firefox-source-docs.mozilla.org/).
 
-Now that you have a patch in LibreWolf, that's not enough to upload to Mozilla. See, Mozilla only accepts patches against Nightly. So here is how to do that:
+Now that you have a patch in vorbit, that's not enough to upload to Mozilla. See, Mozilla only accepts patches against Nightly. So here is how to do that:
 
 If you have not done already, create the `mozilla-unified` folder and build Firefox with it:
 ```bash

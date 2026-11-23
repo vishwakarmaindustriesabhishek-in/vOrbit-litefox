@@ -1,1 +1,1 @@
-identity-allow-site-data = LibreWolf: 常にこのサイトのクッキーとデータを保存する
+identity-allow-site-data = vOrbit-lite: 常にこのサイトのクッキーとデータを保存する

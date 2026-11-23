@@ -1,0 +1,39 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+<script src="chrome://browser/content/preferences/vorbit.js"/>
+
+<html:template id="template-panevorbit">
+
+<hbox class="subcategory" hidden="true" data-category="panevorbit">
+  <html:h1 data-l10n-id="vorbit-header"/>
+</hbox>
+
+<vbox class="subcategory" hidden="true" data-category="panevorbit">
+  <html:setting-group groupid="vorbitBehavior"/>
+  <html:setting-group groupid="vorbitNetworking" style="padding-top: 25px;"/>
+  <html:setting-group groupid="vorbitPrivacy" style="padding-top: 25px;"/>
+  <html:setting-group groupid="vorbitFingerprinting" style="padding-top: 25px;"/>
+</vbox>
+
+<hbox class="subcategory" hidden="true" data-category="panevorbit" style="margin-top: 25px">
+    <html:h1 data-l10n-id="vorbit-footer"/>
+</hbox>
+
+<groupbox data-category="panevorbit" hidden="true">
+  <vbox align="start">
+    <hbox>
+      <button id="vorbit-config-link" is="highlightable-button" flex="1">
+        <image class="vorbit-button-icon" src="chrome://browser/skin/preferences/category-general.svg" />
+        <label data-l10n-id="vorbit-config-link"></label>
+      </button>
+      <button id="vorbit-open-profile" is="highlightable-button" flex="1">
+        <image class="vorbit-button-icon" src="chrome://browser/skin/open.svg" />
+        <label data-l10n-id="vorbit-open-profile"></label>
+      </button>
+    </hbox>
+  </vbox>
+</groupbox>
+
+</html:template>

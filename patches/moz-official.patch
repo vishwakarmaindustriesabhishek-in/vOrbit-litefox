@@ -7,7 +7,7 @@ index 288a79e..f0106ba 100644
      }
  
 -    if (!AppConstants.MOZILLA_OFFICIAL) {
-+    if (Services.prefs.getBoolPref("librewolf.devHelpers", false)) {
++    if (Services.prefs.getBoolPref("vorbit.devHelpers", false)) {
        DevelopmentHelpers.init();
      }
 
@@ -20,7 +20,7 @@ index d24bcbb..1c161f3 100644
      Services.scriptloader.loadSubScript("chrome://browser/content/browser-data-submission-info-bar.js", this);
    }
 -  if (!AppConstants.MOZILLA_OFFICIAL) {
-+  if (Services.prefs.getBoolPref("librewolf.devHelpers", false)) {
++  if (Services.prefs.getBoolPref("vorbit.devHelpers", false)) {
      Services.scriptloader.loadSubScript("chrome://browser/content/browser-development-helpers.js", this);
    }
    Services.scriptloader.loadSubScript("chrome://browser/content/browser-pageActions.js", this);

@@ -6,7 +6,7 @@ index 118709048e..51aeb42a23 100644
     content/browser/preferences/home.js
     content/browser/preferences/search.js
     content/browser/preferences/privacy.js
-+   content/browser/preferences/librewolf.js
++   content/browser/preferences/vorbit.js
     content/browser/preferences/containers.js
     content/browser/preferences/translations.js
     content/browser/preferences/sync.js
@@ -18,7 +18,7 @@ index e4746e3408..3755be8a78 100644
  /* import-globals-from containers.js */
  /* import-globals-from translations.js */
  /* import-globals-from privacy.js */
-+/* import-globals-from librewolf.js */
++/* import-globals-from vorbit.js */
  /* import-globals-from sync.js */
  /* import-globals-from experimental.js */
  /* import-globals-from moreFromMozilla.js */
@@ -26,7 +26,7 @@ index e4746e3408..3755be8a78 100644
    register_module("paneHome", gHomePane);
    register_module("paneSearch", gSearchPane);
    register_module("panePrivacy", gPrivacyPane);
-+  register_module("paneLibrewolf", gLibrewolfPane);
++  register_module("panevorbit", gvorbitPane);
    register_module("paneContainers", gContainersPane);
  
    if (Services.prefs.getBoolPref("browser.translations.newSettingsUI.enable")) {
@@ -38,7 +38,7 @@ index 0dd43c7..2281ad1 100644
      href="chrome://browser/skin/preferences/containers.css"
    />
    <link rel="stylesheet" href="chrome://browser/skin/preferences/privacy.css" />
-+  <link rel="stylesheet" href="chrome://browser/skin/preferences/librewolf.css" />
++  <link rel="stylesheet" href="chrome://browser/skin/preferences/vorbit.css" />
    <link rel="stylesheet" href="chrome://browser/content/preferences/widgets/setting-group.css" />
    <link rel="stylesheet" href="chrome://browser/content/preferences/widgets/setting-pane.css" />
    <link rel="stylesheet" href="chrome://browser/content/preferences/widgets/setting-control.css" />
@@ -47,18 +47,18 @@ index 0dd43c7..2281ad1 100644
          </richlistitem>
  
 -        <richlistitem id="category-ai-features"
-+        <richlistitem id="category-librewolf"
++        <richlistitem id="category-vorbit"
                        class="category"
 -                      value="paneAi"
 -                      data-l10n-id="category-ai-controls"
-+                      value="paneLibrewolf"
-+                      helpTopic="prefs-librewolf"
-+                      data-l10n-id="category-librewolf"
++                      value="panevorbit"
++                      helpTopic="prefs-vorbit"
++                      data-l10n-id="category-vorbit"
                        data-l10n-attrs="tooltiptext"
                        align="center">
            <image class="category-icon"/>
 -          <label class="category-name" flex="1" data-l10n-id="pane-ai-controls-title"></label>
-+          <label class="category-name" flex="1" data-l10n-id="pane-librewolf-title"></label>
++          <label class="category-name" flex="1" data-l10n-id="pane-vorbit-title"></label>
          </richlistitem>
  
          <richlistitem id="category-experimental"
@@ -66,7 +66,7 @@ index 0dd43c7..2281ad1 100644
  #include home.inc.xhtml
  #include search.inc.xhtml
  #include privacy.inc.xhtml
-+#include librewolf.inc.xhtml
++#include vorbit.inc.xhtml
  #include containers.inc.xhtml
  #include sync.inc.xhtml
  #include experimental.inc.xhtml
@@ -78,7 +78,7 @@ index c2bebf7e96..62ab632cec 100644
    skin/classic/browser/preferences/android-menu.svg            (../shared/preferences/android-menu.svg)
    skin/classic/browser/preferences/category-general.svg        (../shared/preferences/category-general.svg)
    skin/classic/browser/preferences/category-privacy-security.svg    (../shared/preferences/category-privacy-security.svg)
-+  skin/classic/browser/preferences/category-librewolf.svg    (../shared/preferences/category-librewolf.svg)
++  skin/classic/browser/preferences/category-vorbit.svg    (../shared/preferences/category-vorbit.svg)
    skin/classic/browser/preferences/category-search.svg         (../shared/preferences/category-search.svg)
    skin/classic/browser/preferences/category-sync.svg           (../shared/preferences/category-sync.svg)
    skin/classic/browser/preferences/containers.css              (../shared/preferences/containers.css)
@@ -86,7 +86,7 @@ index c2bebf7e96..62ab632cec 100644
    skin/classic/browser/preferences/vpn-logo.svg                (../shared/preferences/vpn-logo.svg)
    skin/classic/browser/preferences/search.css                  (../shared/preferences/search.css)
    skin/classic/browser/preferences/siteDataSettings.css        (../shared/preferences/siteDataSettings.css)
-+  skin/classic/browser/preferences/librewolf.css               (../shared/preferences/librewolf.css)
++  skin/classic/browser/preferences/vorbit.css               (../shared/preferences/vorbit.css)
    skin/classic/browser/translations/panel.css                  (../shared/translations/panel.css)
    skin/classic/browser/fxa/fxa-spinner.svg                     (../shared/fxa/fxa-spinner.svg)
    skin/classic/browser/fxa/sync-illustration.svg               (../shared/fxa/sync-illustration.svg)
@@ -98,8 +98,8 @@ index 641c936533..7ff76e622f 100644
    list-style-image: url("chrome://browser/skin/preferences/category-privacy-security.svg");
  }
  
-+#category-librewolf > .category-icon {
-+  list-style-image: url("chrome://browser/skin/preferences/category-librewolf.svg");
++#category-vorbit > .category-icon {
++  list-style-image: url("chrome://browser/skin/preferences/category-vorbit.svg");
 +}
 +
  #category-sync > .category-icon {
@@ -113,67 +113,67 @@ index 8e59a4fa9b..b4e2ce1f3f 100644
        },
      ],
    },
-+  librewolfBehavior: {
-+    l10nId: "librewolf-general-heading2",
++  vorbitBehavior: {
++    l10nId: "vorbit-general-heading2",
 +    headingLevel: 2,
 +    items: [
 +      {
-+        id: "librewolfExtensionUpdate",
-+        l10nId: "librewolf-extension-update-checkbox2",
++        id: "vorbitExtensionUpdate",
++        l10nId: "vorbit-extension-update-checkbox2",
 +      },
 +      {
-+        id: "librewolfSync",
-+        l10nId: "librewolf-sync-checkbox2",
++        id: "vorbitSync",
++        l10nId: "vorbit-sync-checkbox2",
 +      },
 +      {
-+        id: "librewolfMiddleClick",
-+        l10nId: "librewolf-autocopy-checkbox2",
++        id: "vorbitMiddleClick",
++        l10nId: "vorbit-autocopy-checkbox2",
 +      },
 +      {
-+        id: "librewolfUserChrome",
-+        l10nId: "librewolf-styling-checkbox2",
++        id: "vorbitUserChrome",
++        l10nId: "vorbit-styling-checkbox2",
 +      },
 +    ],
 +  },
-+  librewolfNetworking: {
-+    l10nId: "librewolf-network-heading2",
++  vorbitNetworking: {
++    l10nId: "vorbit-network-heading2",
 +    headingLevel: 2,
 +    items: [
 +      {
-+        id: "librewolfIPv6",
-+        l10nId: "librewolf-ipv6-checkbox2",
++        id: "vorbitIPv6",
++        l10nId: "vorbit-ipv6-checkbox2",
 +      }
 +    ],
 +  },
-+  librewolfPrivacy: {
-+    l10nId: "librewolf-privacy-heading2",
++  vorbitPrivacy: {
++    l10nId: "vorbit-privacy-heading2",
 +    headingLevel: 2,
 +    items: [
 +      {
-+        id: "librewolfCrossOrigin",
-+        l10nId: "librewolf-xorigin-ref-checkbox2",
++        id: "vorbitCrossOrigin",
++        l10nId: "vorbit-xorigin-ref-checkbox2",
 +      },
 +    ],
 +  },
-+  librewolfFingerprinting: {
-+    l10nId: "librewolf-broken-heading2",
++  vorbitFingerprinting: {
++    l10nId: "vorbit-broken-heading2",
 +    headingLevel: 2,
 +    items: [
 +      {
-+        id: "librewolfRFP",
-+        l10nId: "librewolf-rfp-checkbox2",
++        id: "vorbitRFP",
++        l10nId: "vorbit-rfp-checkbox2",
 +      },
 +      {
-+        id: "librewolfLetterboxing",
-+        l10nId: "librewolf-letterboxing-checkbox2",
++        id: "vorbitLetterboxing",
++        l10nId: "vorbit-letterboxing-checkbox2",
 +      },
 +      {
-+        id: "librewolfWebGLPrompt",
-+        l10nId: "librewolf-webgl-checkbox2",
++        id: "vorbitWebGLPrompt",
++        l10nId: "vorbit-webgl-checkbox2",
 +      },
 +      {
-+        id: "librewolfWebGLPromptHide",
-+        l10nId: "librewolf-webgl-prompt-checkbox2",
++        id: "vorbitWebGLPromptHide",
++        l10nId: "vorbit-webgl-prompt-checkbox2",
 +      },
 +    ],
 +  },

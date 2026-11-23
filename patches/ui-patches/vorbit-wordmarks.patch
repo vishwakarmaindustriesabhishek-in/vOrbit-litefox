@@ -1,0 +1,157 @@
+diff --git a/browser/themes/shared/privatebrowsing/aboutPrivateBrowsing.css b/browser/themes/shared/privatebrowsing/aboutPrivateBrowsing.css
+--- a/browser/themes/shared/privatebrowsing/aboutPrivateBrowsing.css
++++ b/browser/themes/shared/privatebrowsing/aboutPrivateBrowsing.css
+@@ -63,23 +63,14 @@
+ }
+ 
+ .logo {
+-  background: image-set(url("chrome://branding/content/about-logo-private.png"), url("chrome://branding/content/about-logo-private@2x.png") 2x) no-repeat center
+-    center;
+-  background-size: var(--size-image-xxlarge);
+-  display: inline-block;
+-  height: var(--size-image-xxlarge);
+-  width: var(--size-image-xxlarge);
++  display: none;
+ }
+ 
+ .wordmark {
+-  display: inline-block;
+-  background: url("chrome://branding/content/firefox-wordmark.svg") no-repeat center center;
+-  background-size: 172px;
+-  margin-inline-start: 15px;
+-  -moz-context-properties: fill;
+-  fill: currentColor;
+-  height: 96px;
+-  width: 172px;
++  background: url("chrome://branding/content/private-wordmark.svg") no-repeat center / contain;
++  height: 108px;
++  width: 250px;
++  max-width: 100%;
+ }
+ 
+ .search-inner-wrapper {
+diff --git a/browser/extensions/newtab/content-src/components/Logo/_Logo.scss b/browser/extensions/newtab/content-src/components/Logo/_Logo.scss
+--- a/browser/extensions/newtab/content-src/components/Logo/_Logo.scss
++++ b/browser/extensions/newtab/content-src/components/Logo/_Logo.scss
+@@ -4,9 +4,6 @@
+ }
+ 
+ .logo-and-wordmark {
+-  $logo-size: 64px;
+-  $wordmark-size: 105px;
+-
+   align-items: center;
+   display: flex;
+   justify-content: center;
+@@ -20,43 +17,20 @@
+   }
+ 
+   .logo {
+-    display: inline-block;
+-    height: $logo-size;
+-    width: $logo-size;
+-    background: image-set(url('chrome://branding/content/about-logo.png'), url('chrome://branding/content/about-logo@2x.png') 2x) no-repeat center;
+-    background-size: $logo-size;
++    display: none;
++
++    .has-recommended-stories & {
++      @media (max-width: $break-point-large - 1) {
++        display: block;
++        background: image-set(url('chrome://branding/content/about-logo.png'), url('chrome://branding/content/about-logo@2x.png') 2x) no-repeat center / contain;
++      }
++    }
+   }
+ 
+   .wordmark {
+-    background: url('chrome://branding/content/firefox-wordmark.svg') no-repeat center center;
+-    background-size: $wordmark-size;
+-    -moz-context-properties: fill;
+-    display: inline-block;
+-    fill: var(--newtab-wordmark-color);
+-    height: $logo-size;
+-    margin-inline-start: var(--space-large);
+-    width: $wordmark-size;
+-
+-    // Contrast fix for users who have wallpapers set
+-    @include wallpaper-contrast-fix;
+-  }
+-
+-  @media (max-width: $break-point-medium - 1) {
+-    $logo-size-small: 64px;
+-    $wordmark-small-size: 100px;
+-
+-    .logo {
+-      background-size: $logo-size-small;
+-      height: $logo-size-small;
+-      width: $logo-size-small;
+-    }
+-
+-    .wordmark {
+-      background-size: $wordmark-small-size;
+-      height: $logo-size-small;
+-      width: $wordmark-small-size;
+-      margin-inline-start: var(--space-medium);
+-    }
++    background: url('chrome://branding/content/firefox-wordmark.svg') no-repeat center / contain;
++    height: 64px;
++    width: 228px;
++    max-width: 100%;
+   }
+ }
+-
+diff --git a/browser/extensions/newtab/css/activity-stream.css b/browser/extensions/newtab/css/activity-stream.css
+--- a/browser/extensions/newtab/css/activity-stream.css
++++ b/browser/extensions/newtab/css/activity-stream.css
+@@ -774,40 +774,19 @@
+   margin-block-end: calc(var(--space-large) + var(--space-xlarge));
+ }
+ .logo-and-wordmark .logo {
+-  display: inline-block;
++  display: none;
++}
++@media (max-width: 865px) {
++  .has-recommended-stories .logo-and-wordmark .logo {
++    display: block;
++    background: image-set(url("chrome://branding/content/about-logo.png"), url("chrome://branding/content/about-logo@2x.png") 2x) no-repeat center/contain;
++  }
++}
++.logo-and-wordmark .wordmark {
++  background: url("chrome://branding/content/firefox-wordmark.svg") no-repeat center/contain;
+   height: 64px;
+-  width: 64px;
+-  background: image-set(url("chrome://branding/content/about-logo.png"), url("chrome://branding/content/about-logo@2x.png") 2x) no-repeat center;
+-  background-size: 64px;
+-}
+-.logo-and-wordmark .wordmark {
+-  background: url("chrome://branding/content/firefox-wordmark.svg") no-repeat center center;
+-  background-size: 105px;
+-  -moz-context-properties: fill;
+-  display: inline-block;
+-  fill: var(--newtab-wordmark-color);
+-  height: 64px;
+-  margin-inline-start: var(--space-large);
+-  width: 105px;
+-}
+-.lightWallpaper .logo-and-wordmark .wordmark {
+-  color-scheme: light;
+-}
+-.darkWallpaper .logo-and-wordmark .wordmark {
+-  color-scheme: dark;
+-}
+-@media (max-width: 609px) {
+-  .logo-and-wordmark .logo {
+-    background-size: 64px;
+-    height: 64px;
+-    width: 64px;
+-  }
+-  .logo-and-wordmark .wordmark {
+-    background-size: 100px;
+-    height: 64px;
+-    width: 100px;
+-    margin-inline-start: var(--space-medium);
+-  }
++  width: 228px;
++  max-width: 100%;
+ }
+ 
+ /* stylelint-disable max-nesting-depth */

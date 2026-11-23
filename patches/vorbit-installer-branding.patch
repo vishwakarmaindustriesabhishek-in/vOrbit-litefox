@@ -1,0 +1,72 @@
+--- a/browser/installer/windows/nsis/installer.nsi
++++ b/browser/installer/windows/nsis/installer.nsi
+@@ -166,8 +166,8 @@
+ 
+ !define MOZ_MUI_CUSTOM_ABORT
+ !define MUI_CUSTOMFUNCTION_ABORT "CustomAbort"
+-!define MUI_ICON setup.ico
+-!define MUI_UNICON setup.ico
++!define MUI_ICON firefox64.ico
++!define MUI_UNICON firefox64.ico
+ !define MUI_WELCOMEPAGE_TITLE_3LINES
+ !define MUI_HEADERIMAGE
+ !define MUI_HEADERIMAGE_RIGHT
+--- a/browser/installer/windows/nsis/uninstaller.nsi
++++ b/browser/installer/windows/nsis/uninstaller.nsi
+@@ -162,8 +162,8 @@
+ # Modern User Interface - MUI
+ 
+ !define MUI_ABORTWARNING
+-!define MUI_ICON setup.ico
+-!define MUI_UNICON setup.ico
++!define MUI_ICON firefox64.ico
++!define MUI_UNICON firefox64.ico
+ !define MUI_WELCOMEPAGE_TITLE_3LINES
+ !define MUI_HEADERIMAGE
+ !define MUI_HEADERIMAGE_RIGHT
+--- a/browser/installer/windows/nsis/maintenanceservice_installer.nsi
++++ b/browser/installer/windows/nsis/maintenanceservice_installer.nsi
+@@ -85,8 +85,8 @@
+ ################################################################################
+ # Modern User Interface - MUI
+ 
+-!define MUI_ICON setup.ico
+-!define MUI_UNICON setup.ico
++!define MUI_ICON firefox64.ico
++!define MUI_UNICON firefox64.ico
+ !define MUI_WELCOMEPAGE_TITLE_3LINES
+ !define MUI_UNWELCOMEFINISHPAGE_BITMAP wizWatermark.bmp
+ 
+--- a/browser/installer/windows/Makefile.in
++++ b/browser/installer/windows/Makefile.in
+@@ -6,9 +6,17 @@
+ 
+ CONFIG_DIR = instgen
+ ifeq ($(TARGET_CPU), aarch64)
+-SFX_MODULE = $(topsrcdir)/other-licenses/7zstub/firefox/7zSD.ARM64.sfx
++SFX_SOURCE = $(topsrcdir)/other-licenses/7zstub/firefox/7zSD.ARM64.sfx
+ else
+-SFX_MODULE = $(topsrcdir)/other-licenses/7zstub/firefox/7zSD.Win32.sfx
++SFX_SOURCE = $(topsrcdir)/other-licenses/7zstub/firefox/7zSD.Win32.sfx
++endif
++
++ifeq ($(HOST_OS_ARCH),WINNT)
++SFX_MODULE = $(CURDIR)/vorbit-7zSD.sfx
++SFX_ICON = $(topsrcdir)/$(MOZ_BRANDING_DIRECTORY)/firefox64.ico
++SFX_BRANDER = $(srcdir)/brand-sfx.py
++else
++SFX_MODULE = $(SFX_SOURCE)
+ endif
+ 
+ INSTALLER_FILES = \
+@@ -89,3 +97,10 @@
+ 
+ include $(topsrcdir)/config/rules.mk
+ include $(topsrcdir)/toolkit/mozapps/installer/windows/nsis/makensis.mk
++
++ifeq ($(HOST_OS_ARCH),WINNT)
++$(CONFIG_DIR)/setup.exe:: $(SFX_MODULE)
++
++$(SFX_MODULE): $(SFX_SOURCE) $(SFX_ICON) $(SFX_BRANDER)
++	$(PYTHON3) $(SFX_BRANDER) $(SFX_SOURCE) $(SFX_ICON) $@
++endif

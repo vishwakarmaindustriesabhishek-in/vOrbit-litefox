@@ -1,0 +1,23 @@
+--- a/nsprpub/pr/src/md/windows/w95sock.c
++++ b/nsprpub/pr/src/md/windows/w95sock.c
+@@ -97,5 +97,5 @@
+
+ PRInt32 _MD_SocketAvailable(PRFileDesc* fd) {
+-  PRInt32 result;
++  u_long result;
+
+   if (ioctlsocket(fd->secret->md.osfd, FIONREAD, &result) < 0) {
+@@ -103,5 +103,5 @@
+     return -1;
+   }
+-  return result;
++  return (PRInt32)result;
+ }
+
+@@ -304,5 +304,5 @@
+   _pr_win_connectex = NULL;
+   SOCKET sock;
+-  PRInt32 dwBytes;
++  DWORD dwBytes;
+   int rc;
+
